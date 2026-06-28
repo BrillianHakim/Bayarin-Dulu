@@ -53,13 +53,14 @@ export default function Home() {
       <div className="w-full max-w-sm">
 
         {/* Logo & Tagline */}
-        <div className="flex flex-col items-center justify-center bg-primary rounded-2xl py-8 mb-6">
-          <span className="text-4xl mb-2">💰</span>
-          <h1 className="text-xl font-bold text-white">
-            Bayarin Dulu
-          </h1>
-          <p className="text-sm text-primary-light mt-1">
-            Ga ada yang bisa kabur dari tagihan
+        <div className="flex flex-col items-center justify-center bg-white rounded-2xl py-6 mb-6 border border-gray-100 shadow-sm">
+          <img
+            src="/BayarinDulu.png"
+            alt="Bayarin Dulu"
+            className="h-24 w-auto object-contain"
+          />
+          <p className="text-sm text-gray-500 mt-2">
+            Patungan jadi gampang, nggak usah ribet!
           </p>
         </div>
 
