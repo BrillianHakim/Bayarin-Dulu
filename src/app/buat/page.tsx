@@ -156,9 +156,10 @@ export default function BuatSesi() {
         if (itemError) throw itemError;
 
         const relasiPembayar = item.sharedBy.map((localId) => ({
-          item_id: itemData.id,
-          anggota_id: anggotaMap[localId],
-        }));
+  item_id: itemData.id,
+  anggota_id: anggotaMap[localId],
+  qty: item.isSharedQty ? (item.qtyPerOrang?.[localId] || 1) : 1,
+}));
         const { error: relasiError } = await supabase
           .from("item_anggota")
           .insert(relasiPembayar);

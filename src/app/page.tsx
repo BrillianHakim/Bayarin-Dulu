@@ -57,11 +57,9 @@ export default function Home() {
           <img
             src="/BayarinDulu.png"
             alt="Bayarin Dulu"
-            className="h-24 w-auto object-contain"
+            className="h-35 w-auto object-contain"
           />
-          <p className="text-sm text-gray-500 mt-2">
-            Patungan jadi gampang, nggak usah ribet!
-          </p>
+          
         </div>
 
         {/* Riwayat Sesi */}

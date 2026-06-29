@@ -16,11 +16,11 @@ interface ItemDenganPembayar {
   nama: string;
   harga: number;
   anggota_ids: string[];
+  qty_per_anggota: Record<string, number>;
 }
 
 export default function SesiAktif() {
   const params = useParams();
-  
   const sesiId = params.id as string;
 
   const [namaSesi, setNamaSesi] = useState("");
@@ -36,7 +36,6 @@ export default function SesiAktif() {
   const fetchData = async () => {
     setLoading(true);
 
-    // Ambil data sesi
     const { data: sesiData } = await supabase
       .from("sesi")
       .select("*")
@@ -48,7 +47,6 @@ export default function SesiAktif() {
       setTalangNama(sesiData.talang_nama);
     }
 
-    // Ambil semua anggota di sesi ini
     const { data: anggotaData } = await supabase
       .from("anggota")
       .select("*")
@@ -56,7 +54,6 @@ export default function SesiAktif() {
 
     if (anggotaData) setAnggota(anggotaData);
 
-    // Ambil semua item + siapa aja yang pesan (join manual)
     const { data: itemData } = await supabase
       .from("item")
       .select("*")
@@ -67,14 +64,20 @@ export default function SesiAktif() {
       for (const item of itemData) {
         const { data: relasiData } = await supabase
           .from("item_anggota")
-          .select("anggota_id")
+          .select("anggota_id, qty")
           .eq("item_id", item.id);
+
+        const qtyMap: Record<string, number> = {};
+        relasiData?.forEach((r) => {
+          qtyMap[r.anggota_id] = r.qty || 1;
+        });
 
         itemsWithPembayar.push({
           id: item.id,
           nama: item.nama,
           harga: item.harga,
           anggota_ids: relasiData?.map((r) => r.anggota_id) || [],
+          qty_per_anggota: qtyMap,
         });
       }
       setItems(itemsWithPembayar);
@@ -86,20 +89,21 @@ export default function SesiAktif() {
   const hitungTotalPerOrang = (anggotaId: string) => {
     return items.reduce((sum, item) => {
       if (item.anggota_ids.includes(anggotaId)) {
-        return sum + item.harga;
+        const qty = item.qty_per_anggota[anggotaId] || 1;
+        return sum + item.harga * qty;
       }
       return sum;
     }, 0);
   };
 
-  const totalTagihan = items.reduce(
-    (sum, item) => sum + item.harga * item.anggota_ids.length,
-    0
-  );
+  const totalTagihan = items.reduce((sum, item) => {
+    const totalQty = Object.values(item.qty_per_anggota).reduce((a, b) => a + b, 0);
+    return sum + item.harga * (totalQty || item.anggota_ids.length);
+  }, 0);
 
   const totalSudahBayar = anggota
-  .filter((a) => a.sudah_bayar && a.nama !== talangNama)
-  .reduce((sum, a) => sum + hitungTotalPerOrang(a.id), 0);
+    .filter((a) => a.sudah_bayar && a.nama !== talangNama)
+    .reduce((sum, a) => sum + hitungTotalPerOrang(a.id), 0);
 
   const toggleBayar = async (anggotaId: string, currentStatus: boolean) => {
     await supabase
@@ -164,45 +168,45 @@ export default function SesiAktif() {
             Status per orang
           </p>
           {anggota.map((a) => {
-  const isPenalang = a.nama === talangNama;
-  return (
-    <div
-      key={a.id}
-      className="flex items-center gap-3 py-2 border-b border-gray-100 last:border-none"
-    >
-      <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold ${isPenalang ? "bg-accent text-white" : "bg-primary-light text-primary-dark"}`}>
-        {a.nama.charAt(0).toUpperCase()}
-      </div>
-      <div className="flex-1">
-        <span className="text-sm text-gray-700">{a.nama}</span>
-        {isPenalang && (
-          <span className="ml-2 text-xs bg-accent-light text-accent-dark px-2 py-0.5 rounded-full font-medium">
-            Penalang 👑
-          </span>
-        )}
-      </div>
-      <span className="text-xs text-gray-400">
-        Rp {hitungTotalPerOrang(a.id).toLocaleString("id-ID")}
-      </span>
-      {isPenalang ? (
-        <span className="text-xs px-2.5 py-1 rounded-full font-medium bg-accent-light text-accent-dark">
-          Lunas ✓
-        </span>
-      ) : (
-        <button
-          onClick={() => toggleBayar(a.id, a.sudah_bayar)}
-          className={`text-xs px-2.5 py-1 rounded-full font-medium transition ${
-            a.sudah_bayar
-              ? "bg-primary-light text-primary-dark"
-              : "bg-red-50 text-red-500"
-          }`}
-        >
-          {a.sudah_bayar ? "Lunas ✓" : "Belum"}
-        </button>
-      )}
-    </div>
-  );
-})}
+            const isPenalang = a.nama === talangNama;
+            return (
+              <div
+                key={a.id}
+                className="flex items-center gap-3 py-2 border-b border-gray-100 last:border-none"
+              >
+                <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold ${isPenalang ? "bg-accent text-white" : "bg-primary-light text-primary-dark"}`}>
+                  {a.nama.charAt(0).toUpperCase()}
+                </div>
+                <div className="flex-1">
+                  <span className="text-sm text-gray-700">{a.nama}</span>
+                  {isPenalang && (
+                    <span className="ml-2 text-xs bg-accent-light text-accent-dark px-2 py-0.5 rounded-full font-medium">
+                      Penalang 👑
+                    </span>
+                  )}
+                </div>
+                <span className="text-xs text-gray-400">
+                  Rp {hitungTotalPerOrang(a.id).toLocaleString("id-ID")}
+                </span>
+                {isPenalang ? (
+                  <span className="text-xs px-2.5 py-1 rounded-full font-medium bg-accent-light text-accent-dark">
+                    Lunas ✓
+                  </span>
+                ) : (
+                  <button
+                    onClick={() => toggleBayar(a.id, a.sudah_bayar)}
+                    className={`text-xs px-2.5 py-1 rounded-full font-medium transition ${
+                      a.sudah_bayar
+                        ? "bg-primary-light text-primary-dark"
+                        : "bg-red-50 text-red-500"
+                    }`}
+                  >
+                    {a.sudah_bayar ? "Lunas ✓" : "Belum"}
+                  </button>
+                )}
+              </div>
+            );
+          })}
         </div>
 
         {/* CTA */}

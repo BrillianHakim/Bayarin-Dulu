@@ -16,6 +16,7 @@ interface ItemDenganPembayar {
   nama: string;
   harga: number;
   anggota_ids: string[];
+  qty_per_anggota: Record<string, number>;
 }
 
 export default function Ringkasan() {
@@ -64,14 +65,20 @@ export default function Ringkasan() {
       for (const item of itemData) {
         const { data: relasiData } = await supabase
           .from("item_anggota")
-          .select("anggota_id")
+          .select("anggota_id, qty")
           .eq("item_id", item.id);
+
+        const qtyMap: Record<string, number> = {};
+        relasiData?.forEach((r) => {
+          qtyMap[r.anggota_id] = r.qty || 1;
+        });
 
         itemsWithPembayar.push({
           id: item.id,
           nama: item.nama,
           harga: item.harga,
           anggota_ids: relasiData?.map((r) => r.anggota_id) || [],
+          qty_per_anggota: qtyMap,
         });
       }
       setItems(itemsWithPembayar);
@@ -83,24 +90,25 @@ export default function Ringkasan() {
   const hitungTotalPerOrang = (anggotaId: string) => {
     return items.reduce((sum, item) => {
       if (item.anggota_ids.includes(anggotaId)) {
-        return sum + item.harga;
+        const qty = item.qty_per_anggota[anggotaId] || 1;
+        return sum + item.harga * qty;
       }
       return sum;
     }, 0);
   };
 
-  const totalTagihan = items.reduce(
-    (sum, item) => sum + item.harga * item.anggota_ids.length,
-    0
-  );
+  const totalTagihan = items.reduce((sum, item) => {
+    const totalQty = Object.values(item.qty_per_anggota).reduce((a, b) => a + b, 0);
+    return sum + item.harga * (totalQty || item.anggota_ids.length);
+  }, 0);
 
   const selesaikanSesi = async () => {
-  await supabase
-    .from("sesi")
-    .update({ status: "selesai" })
-    .eq("id", sesiId);
-  router.push(`/selesai/${sesiId}`);
-};
+    await supabase
+      .from("sesi")
+      .update({ status: "selesai" })
+      .eq("id", sesiId);
+    router.push(`/selesai/${sesiId}`);
+  };
 
   if (loading) {
     return (
@@ -160,13 +168,11 @@ export default function Ringkasan() {
                   <p className="text-sm font-semibold text-primary">
                     Rp {hitungTotalPerOrang(a.id).toLocaleString("id-ID")}
                   </p>
-                  <span
-                    className={`text-xs px-2 py-0.5 rounded-full ${
-                      a.sudah_bayar
-                        ? "bg-primary-light text-primary-dark"
-                        : "bg-red-50 text-red-500"
-                    }`}
-                  >
+                  <span className={`text-xs px-2 py-0.5 rounded-full ${
+                    a.sudah_bayar
+                      ? "bg-primary-light text-primary-dark"
+                      : "bg-red-50 text-red-500"
+                  }`}>
                     {a.sudah_bayar ? "Lunas ✓" : "Belum bayar"}
                   </span>
                 </div>
@@ -189,15 +195,19 @@ export default function Ringkasan() {
               </p>
               {items
                 .filter((item) => item.anggota_ids.includes(a.id))
-                .map((item) => (
-                  <div
-                    key={item.id}
-                    className="flex justify-between text-xs text-gray-500 py-0.5"
-                  >
-                    <span>{item.nama}</span>
-                    <span>Rp {item.harga.toLocaleString("id-ID")}</span>
-                  </div>
-                ))}
+                .map((item) => {
+                  const qty = item.qty_per_anggota[a.id] || 1;
+                  const subtotal = item.harga * qty;
+                  return (
+                    <div key={item.id} className="flex justify-between text-xs text-gray-500 py-0.5">
+                      <span>
+                        {item.nama}
+                        {qty > 1 && <span className="text-gray-400"> ×{qty}</span>}
+                      </span>
+                      <span>Rp {subtotal.toLocaleString("id-ID")}</span>
+                    </div>
+                  );
+                })}
               <div className="flex justify-between text-xs font-medium text-gray-700 pt-1 border-t border-gray-100 mt-1">
                 <span>Total</span>
                 <span>Rp {hitungTotalPerOrang(a.id).toLocaleString("id-ID")}</span>
