@@ -1,36 +1,49 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 💰 Bayarin Dulu
 
-## Getting Started
+> Aplikasi split bill untuk patungan yang adil dan akurat. Dibuat karena capek hitung manual waktu nongkrong bareng teman.
 
-First, run the development server:
+![Bayarin Dulu](public/BayarinDulu.png)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 🌐 Live Demo
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+👉 [bayarindulu.vercel.app](https://bayarindulu.vercel.app)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 📱 Tampilan
 
-## Learn More
+| Home | Buat Sesi | Sesi Aktif | Selesai |
+|------|-----------|------------|---------|
+| Riwayat sesi | Input anggota & item | Status bayar | Share ke WA |
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## ✨ Fitur
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- **Buat sesi patungan** — input nama sesi, anggota, dan pesanan masing-masing
+- **2 mode input item:**
+  - *Per Orang* — item berbeda tiap orang, harga penuh masing-masing
+  - *Berbagi qty* — item dibeli bareng (misal gorengan), hitung proporsional
+- **Kalkulasi otomatis** — tagihan per orang dihitung real-time sebelum sesi dimulai
+- **Penalang** — pilih siapa yang bayar duluan, otomatis ditandai lunas
+- **Tracking status** — toggle Lunas/Belum per anggota
+- **Share ke WhatsApp** — kirim ringkasan tagihan ke grup langsung
+- **Riwayat sesi** — semua sesi tersimpan, bisa dilihat kapan saja
+- **Data isolation** — sesi kamu tidak terlihat oleh pengguna lain (localStorage)
+- **Hapus sesi** — dengan konfirmasi sebelum dihapus
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 🛠 Tech Stack
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| Layer | Teknologi |
+|-------|-----------|
+| Framework | Next.js 16 (App Router) |
+| Language | TypeScript |
+| Styling | Tailwind CSS |
+| Database | Supabase (PostgreSQL) |
+| Deploy | Vercel |
+
+---
+
+## 🗄 Struktur Database
