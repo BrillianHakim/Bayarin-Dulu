@@ -2,8 +2,6 @@
 
 > Aplikasi split bill untuk patungan yang adil dan akurat. Dibuat karena capek hitung manual waktu nongkrong bareng teman.
 
-![Bayarin Dulu](public/BayarinDulu.png)
-
 ## 🌐 Live Demo
 
 👉 [bayarindulu.vercel.app](https://bayarindulu.vercel.app)
@@ -125,9 +123,9 @@ Nama "Bayarin Dulu" diambil dari ungkapan yang sering muncul di tongkrongan — 
 
 ## 👨‍💻 Developer
 
-**Nama Kamu** — Mahasiswa IT Semester 8
+**Brillian Hakim** — Mahasiswa IT Semester 8
 
-[![GitHub](https://img.shields.io/badge/GitHub-username-black?style=flat&logo=github)](https://github.com/username-kamu)
+[![GitHub](https://img.shields.io/badge/GitHub-username-black?style=flat&logo=github)](https://github.com/BrillianHakim)
 
 ---
 
