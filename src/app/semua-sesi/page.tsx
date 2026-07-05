@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
+import { getSesiIds, hapusSesiId } from "@/lib/localSesi";
 
 interface Sesi {
   id: string;
@@ -26,15 +27,24 @@ export default function SemuaSesi() {
   }, []);
 
   const fetchSesi = async () => {
-    setLoading(true);
-    const { data } = await supabase
-      .from("sesi")
-      .select("*")
-      .order("created_at", { ascending: false });
+  setLoading(true);
+  const ids = getSesiIds();
 
-    if (data) setSesiList(data);
+  if (ids.length === 0) {
+    setSesiList([]);
     setLoading(false);
-  };
+    return;
+  }
+
+  const { data } = await supabase
+    .from("sesi")
+    .select("*")
+    .in("id", ids)
+    .order("created_at", { ascending: false });
+
+  if (data) setSesiList(data);
+  setLoading(false);
+};
 
   const formatTanggal = (dateStr: string) => {
     const date = new Date(dateStr);
@@ -61,25 +71,24 @@ export default function SemuaSesi() {
   const batalHapus = () => setHapusId(null);
 
   const hapusSesi = async () => {
-    if (!hapusId) return;
-    setHapusLoading(true);
+  if (!hapusId) return;
+  setHapusLoading(true);
 
-    // Karena ada ON DELETE CASCADE di database,
-    // hapus sesi otomatis hapus anggota, item, item_anggota juga
-    const { error } = await supabase
-      .from("sesi")
-      .delete()
-      .eq("id", hapusId);
+  const { error } = await supabase
+    .from("sesi")
+    .delete()
+    .eq("id", hapusId);
 
-    if (error) {
-      alert("Gagal hapus sesi, coba lagi.");
-    } else {
-      setSesiList((prev) => prev.filter((s) => s.id !== hapusId));
-    }
+  if (error) {
+    alert("Gagal hapus sesi, coba lagi.");
+  } else {
+    hapusSesiId(hapusId); // hapus dari localStorage juga
+    setSesiList((prev) => prev.filter((s) => s.id !== hapusId));
+  }
 
-    setHapusId(null);
-    setHapusLoading(false);
-  };
+  setHapusId(null);
+  setHapusLoading(false);
+};
 
   const filtered = sesiList.filter((s) => {
     if (filter === "aktif") return s.status === "aktif";

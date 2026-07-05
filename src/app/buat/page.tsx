@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
+import { simpanSesiId } from "@/lib/localSesi";
 
 interface Member {
   id: string;
@@ -165,6 +166,7 @@ export default function BuatSesi() {
           .insert(relasiPembayar);
         if (relasiError) throw relasiError;
       }
+      simpanSesiId(sesiId);
       router.push(`/sesi/${sesiId}`);
     } catch (err) {
       console.error(err);
