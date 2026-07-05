@@ -57,7 +57,7 @@ export default function Home() {
       <div className="w-full max-w-sm">
 
         {/* Hero */}
-        <div className="bg-white px-5 pt-8 pb-6 border-b border-gray-100">
+        {/* <div className="bg-white px-5 pt-8 pb-6 border-b border-gray-100">
           <div className="flex flex-col items-center">
             <img
               src="/BayarinDulu.png"
@@ -65,7 +65,7 @@ export default function Home() {
               className="h-20 w-auto object-contain mb-1"
             />
           </div>
-        </div>
+        </div> */}
 
         {/* Content */}
         <div className="px-4 py-5">
