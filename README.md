@@ -125,7 +125,7 @@ Nama "Bayarin Dulu" diambil dari ungkapan yang sering muncul di tongkrongan — 
 
 **Brillian Hakim** — Mahasiswa IT Semester 8
 
-[![GitHub](https://img.shields.io/badge/GitHub-username-black?style=flat&logo=github)](https://github.com/BrillianHakim)
+[![GitHub](https://img.shields.io/badge/GitHub-BrillianHakim-black?style=flat&logo=github)](https://github.com/BrillianHakim)
 
 ---
 
