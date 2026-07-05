@@ -34,7 +34,7 @@ export default function Home() {
     const { data } = await supabase
       .from("sesi")
       .select("*")
-      .in("id", ids.slice(0, 3)) // ambil max 3 terbaru
+      .in("id", ids.slice(0, 3))
       .order("created_at", { ascending: false });
 
     if (data) setSesiList(data);
@@ -57,23 +57,13 @@ export default function Home() {
       <div className="w-full max-w-sm">
 
         {/* Hero */}
-        <div className="bg-primary px-5 pt-10 pb-8">
-          <div className="flex items-center gap-3 mb-1">
-            <div className="w-12 h-12 rounded-2xl bg-white/20 flex items-center justify-center flex-shrink-0">
-              <img
-                src="/BayarinDulu.png"
-                alt="Bayarin Dulu"
-                className="w-10 h-10 object-contain"
-              />
-            </div>
-            <div>
-              <h1 className="text-xl font-semibold text-white leading-tight">
-                Bayarin Dulu
-              </h1>
-              <span className="text-xs text-white/70 bg-white/10 px-2.5 py-0.5 rounded-full">
-                Patungan jadi gampang 💰
-              </span>
-            </div>
+        <div className="bg-white px-5 pt-8 pb-6 border-b border-gray-100">
+          <div className="flex flex-col items-center">
+            <img
+              src="/BayarinDulu.png"
+              alt="Bayarin Dulu"
+              className="h-20 w-auto object-contain mb-1"
+            />
           </div>
         </div>
 
@@ -107,7 +97,9 @@ export default function Home() {
             </div>
           ) : sesiList.length === 0 ? (
             <div className="bg-white border border-dashed border-gray-200 rounded-2xl p-8 text-center mb-4">
-              <div className="text-3xl mb-3">🧾</div>
+              <div className="w-12 h-12 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                <span className="text-2xl">🧾</span>
+              </div>
               <p className="text-sm font-medium text-gray-600">Belum ada sesi</p>
               <p className="text-xs text-gray-400 mt-1">
                 Buat sesi pertamamu sekarang!
@@ -122,8 +114,8 @@ export default function Home() {
                 >
                   <div className="bg-white rounded-2xl p-4 flex items-center gap-3 hover:shadow-sm transition-shadow cursor-pointer">
                     <div className="w-10 h-10 rounded-xl bg-primary-light flex items-center justify-center flex-shrink-0">
-                      <span className="text-lg">
-                        {sesi.status === "selesai" ? "✅" : "🍽️"}
+                      <span className="text-sm font-bold text-primary-dark">
+                        {sesi.nama_sesi.charAt(0).toUpperCase()}
                       </span>
                     </div>
                     <div className="flex-1 min-w-0">
